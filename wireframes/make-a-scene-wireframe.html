@@ -1,0 +1,70 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>OIMO Make a Scene – Wireframe</title>
+  <style>
+    body { font-family: Inter, Arial, sans-serif; margin: 0; background: #0e0f12; color: #eef1f6; }
+    .wrap { max-width: 980px; margin: 24px auto; padding: 0 16px; }
+    .card { background: #171a21; border: 1px solid #2b3140; border-radius: 12px; padding: 16px; margin-bottom: 14px; }
+    h1,h2 { margin: 0 0 10px; }
+    .row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+    input, button, select { width: 100%; padding: 10px; border-radius: 8px; border: 1px solid #384055; background: #0f1320; color: #eef1f6; }
+    .scenes { display: grid; grid-template-columns: repeat(5, 1fr); gap: 8px; }
+    .scene { border: 1px dashed #4f5c7a; border-radius: 10px; padding: 12px; text-align: center; font-size: 12px; }
+    .cta { background: #4f7cff; border: 0; font-weight: 700; }
+    .muted { color: #a7b1c7; font-size: 12px; }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <h1>OIMO Make a Scene – Step 1 Wireframe</h1>
+    <p class="muted">User flow preview for passcode gate → upload → scene select → generate → result.</p>
+
+    <div class="card">
+      <h2>1) Access Gate</h2>
+      <div class="row">
+        <input placeholder="Enter passcode" />
+        <select><option>Accept Terms & Conditions</option></select>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>2) Upload & Character</h2>
+      <div class="row">
+        <input type="file" multiple />
+        <input placeholder="Optional character name" />
+      </div>
+      <p class="muted">Upload 1-5 photos. Optional: merge into one reusable character profile.</p>
+    </div>
+
+    <div class="card">
+      <h2>3) Optional QR Link</h2>
+      <input placeholder="https://your-link.example" />
+    </div>
+
+    <div class="card">
+      <h2>4) Choose Scene</h2>
+      <div class="scenes">
+        <div class="scene">Scene 1</div><div class="scene">Scene 2</div><div class="scene">Scene 3</div><div class="scene">Scene 4</div><div class="scene">Scene 5</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>5) Generate</h2>
+      <button class="cta">Generate Image</button>
+      <p class="muted">Progress states: queued → running → completed/failed. Cooldown: 60s.</p>
+    </div>
+
+    <div class="card">
+      <h2>6) Result</h2>
+      <p>[Preview canvas/image]</p>
+      <div class="row">
+        <button>Download JPG</button>
+        <button>Download PNG</button>
+      </div>
+    </div>
+  </div>
+</body>
+</html>
