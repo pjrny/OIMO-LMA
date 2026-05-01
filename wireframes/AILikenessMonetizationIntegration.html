@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LMA Agent - Gemini Edition</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/react@18/umd/react.development.js"></script>
+    <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&family=JetBrains+Mono&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Inter', sans-serif; background-color: #020617; color: #f8fafc; }
+        .glass { background: rgba(15, 23, 42, 0.8); backdrop-filter: blur(12px); border: 1px solid rgba(255, 255, 255, 0.1); }
+        .neon-border { position: relative; }
+        .neon-border::after { content: ''; position: absolute; inset: -1px; background: linear-gradient(45deg, #6366f1, #a855f7, #ec4899); border-radius: inherit; z-index: -1; opacity: 0.5; }
+        .mono { font-family: 'JetBrains Mono', monospace; }
+        @keyframes scan { 0% { top: 0%; } 100% { top: 100%; } }
+        .scanner::after { content: ''; position: absolute; width: 100%; height: 2px; background: #6366f1; top: 0; left: 0; box-shadow: 0 0 15px #6366f1; animation: scan 3s linear infinite; }
+    </style>
+</head>
+<body>
+    <div id="root"></div>
+
+    <script type="text/babel">
+        const { useState, useEffect, useRef } = React;
+
+        // --- CONSTANTS ---
+        const apiKey = ""; // Set at runtime
+        const TEXT_MODEL = "gemini-2.5-flash-preview-09-2025";
+        const IMAGE_MODEL = "imagen-4.0-generate-001";
+        const TTS_MODEL = "gemini-2.5-flash-preview-tts";
+
+        // --- UTILS ---
+        const fetchWithRetry = async (url, options, retries = 5) => {
+            for (let i = 0; i < retries; i++) {
+                try {
+                    const res = await fetch(url, options);
+                    if (res.ok) return await res.json();
+                } catch (e) {
+                    if (i === retries - 1) throw e;
+                    await new Promise(r => setTimeout(r, Math.pow(2, i) * 1000));
+                }
+            }
+        };
+
+        const pcmToWav = (pcmData, sampleRate = 24000) => {
+            const buffer = new ArrayBuffer(44 + pcmData.length);
+            const view = new DataView(buffer);
+            const writeString = (offset, string) => {
+                for (let i = 0; i < string.length; i++) view.setUint8(offset + i, string.charCodeAt(i));
+            };
+            writeString(0, 'RIFF');
+            view.setUint32(4, 32 + pcmData.length, true);
+            writeString(8, 'WAVE');
+            writeString(12, 'fmt ');
+            view.setUint32(16, 16, true);
+            view.setUint16(20, 1, true);
+            view.setUint16(22, 1, true);
+            view.setUint32(24, sampleRate, true);
+            view.setUint32(28, sampleRate * 2, true);
+            view.setUint16(32, 2, true);
+            view.setUint16(34, 16, true);
+            writeString(36, 'data');
+            view.setUint32(40, pcmData.length, true);
+            const pcmArray = new Uint8Array(pcmData);
+            for (let i = 0; i < pcmArray.length; i++) view.setUint8(44 + i, pcmArray[i]);
+            return new Blob([buffer], { type: 'audio/wav' });
+        };
+
+        const Icon = ({ name, className = "" }) => {
+            const icons = {
+                brain: <svg className={className} width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M9.5 2A2.5 2.5 0 0 1 12 4.5v15a2.5 2.5 0 0 1-4.96.44 2.5 2.5 0 0 1-2.96-3.08 3 3 0 0 1-.34-5.58 2.5 2.5 0 0 1 1.32-4.24 2.5 2.5 0 0 1 1.98-3A2.5 2.5 0 0 1 9.5 2Z"/><path d="M14.5 2A2.5 2.5 0 0 0 12 4.5v15a2.5 2.5 0 0 0 4.96.44 2.5 2.5 0 0 0 2.96-3.08 3 3 0 0 0 .34-5.58 2.5 2.5 0 0 0-1.32-4.24 2.5 2.5 0 0 0-1.98-3A2.5 2.5 0 0 0 14.5 2Z"/></svg>,
+                voice: <svg className={className} width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" x2="12" y1="19" y2="22"/></svg>,
+                zap: <svg className={className} width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>,
+                camera: <svg className={className} width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3z"/><circle cx="12" cy="13" r="3"/></svg>
+            };
+            return icons[name] || null;
+        };
+
+        // --- COMPONENTS ---
+        const App = () => {
+            const [status, setStatus] = useState("Idle");
+            const [identity, setIdentity] = useState({ name: "Unverified Creator", bio: "", voiceDesc: "" });
+            const [assets, setAssets] = useState([]);
+            const [isSpeaking, setIsSpeaking] = useState(false);
+            const [profileImage, setProfileImage] = useState(null);
+
+            // 1. Text Generation - Bio
+            const generateIdentity = async () => {
+                setStatus("Defining Identity...");
+                const prompt = "Generate a futuristic digital persona biography for a creator using Likeness Management AI. Include a 'Voice Identity' description (e.g. 'Silk & Static'). Keep it brief (3 sentences).";
+                const data = await fetchWithRetry(`https://generativelanguage.googleapis.com/v1beta/models/${TEXT_MODEL}:generateContent?key=${apiKey}`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ contents: [{ parts: [{ text: prompt }] }] })
+                });
+                const text = data.candidates[0].content.parts[0].text;
+                const bio = text.split('\n')[0];
+                setIdentity(prev => ({ ...prev, bio: text }));
+                setStatus("Identity Mapped");
+            };
+
+            // 2. Image Generation - Assets
+            const generateAsset = async (type) => {
+                setStatus(`Synthesizing ${type}...`);
+                const prompt = `A high-fidelity digital twin asset: ${type} of a futuristic human creator. Hyper-realistic, 8k, cinematic lighting, purple and teal accents.`;
+                try {
+                    const data = await fetchWithRetry(`https://generativelanguage.googleapis.com/v1beta/models/${IMAGE_MODEL}:predict?key=${apiKey}`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ instances: [{ prompt }], parameters: { sampleCount: 1 } })
+                    });
+                    const base64 = data.predictions[0].bytesBase64Encoded;
+                    const url = `data:image/png;base64,${base64}`;
+                    setAssets(prev => [{ id: Date.now(), type, url, caption: "Generated by Imagen 4.0" }, ...prev]);
+                    setStatus("Asset Vaulted");
+                } catch (e) {
+                    setStatus("Image Gen Failed");
+                }
+            };
+
+            // 3. Voice Briefing - TTS
+            const speakBriefing = async () => {
+                if (!identity.bio) return;
+                setIsSpeaking(true);
+                const textToSpeak = `Likeness Agent Online. Status report: ${identity.bio.substring(0, 150)}`;
+                try {
+                    const data = await fetchWithRetry(`https://generativelanguage.googleapis.com/v1beta/models/${TTS_MODEL}:generateContent?key=${apiKey}`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            contents: [{ parts: [{ text: `Say in a calm, artificial, professional voice: ${textToSpeak}` }] }],
+                            generationConfig: { 
+                                responseModalities: ["AUDIO"],
+                                speechConfig: { voiceConfig: { prebuiltVoiceConfig: { voiceName: "Charon" } } }
+                            }
+                        })
+                    });
+                    const audioBase64 = data.candidates[0].content.parts[0].inlineData.data;
+                    const audioBuffer = Uint8Array.from(atob(audioBase64), c => c.charCodeAt(0));
+                    const wavBlob = pcmToWav(audioBuffer, 24000);
+                    const audio = new Audio(URL.createObjectURL(wavBlob));
+                    audio.onended = () => setIsSpeaking(false);
+                    audio.play();
+                } catch (e) {
+                    setIsSpeaking(false);
+                }
+            };
+
+            const handlePhotoUpload = (e) => {
+                const file = e.target.files[0];
+                if (file) {
+                    const reader = new FileReader();
+                    reader.onload = (re) => setProfileImage(re.target.result);
+                    reader.readAsDataURL(file);
+                }
+            };
+
+            return (
+                <div className="min-h-screen flex flex-col items-center p-4 md:p-10">
+                    <header className="w-full max-w-6xl flex justify-between items-center mb-10 border-b border-white/10 pb-6">
+                        <div className="flex items-center gap-3">
+                            <div className="p-3 bg-indigo-600 rounded-lg shadow-[0_0_20px_rgba(79,70,229,0.4)]">
+                                <Icon name="zap" className="text-white" />
+                            </div>
+                            <div>
+                                <h1 className="text-2xl font-extrabold tracking-tighter uppercase italic">LMA Agent <span className="text-indigo-500">v3.0</span></h1>
+                                <p className="text-[10px] mono text-gray-500 uppercase tracking-widest">Active System State: {status}</p>
+                            </div>
+                        </div>
+                        <div className="hidden md:flex gap-4">
+                            <div className="glass px-4 py-2 rounded-md border-indigo-500/30">
+                                <p className="text-[9px] uppercase text-gray-400">Identity Integrity</p>
+                                <p className="font-bold text-green-400">98.2%</p>
+                            </div>
+                            <div className="glass px-4 py-2 rounded-md">
+                                <p className="text-[9px] uppercase text-gray-400">Cloud Sync</p>
+                                <p className="font-bold text-blue-400 italic">LIVE</p>
+                            </div>
+                        </div>
+                    </header>
+
+                    <main className="w-full max-w-6xl grid grid-cols-1 lg:grid-cols-12 gap-8">
+                        {/* LEFT: Identity Verification */}
+                        <section className="lg:col-span-4 space-y-6">
+                            <div className="glass p-6 rounded-2xl relative overflow-hidden">
+                                <div className="flex flex-col items-center text-center">
+                                    <div className={`w-32 h-32 rounded-full border-4 border-indigo-500/50 mb-4 overflow-hidden relative ${!profileImage && 'scanner bg-slate-900'}`}>
+                                        {profileImage ? (
+                                            <img src={profileImage} className="w-full h-full object-cover" />
+                                        ) : (
+                                            <div className="w-full h-full flex items-center justify-center">
+                                                <Icon name="camera" className="text-gray-600" size={32} />
+                                            </div>
+                                        )}
+                                    </div>
+                                    <h2 className="text-xl font-bold mb-1">{identity.name}</h2>
+                                    <p className="text-xs text-indigo-400 mono uppercase mb-4">Class: Premium Creator</p>
+                                    
+                                    <div className="w-full space-y-2 text-left">
+                                        <label className="block w-full text-center py-2 border border-white/10 rounded-lg text-xs hover:bg-white/5 cursor-pointer transition-colors">
+                                            Update Identity Photo
+                                            <input type="file" className="hidden" onChange={handlePhotoUpload} />
+                                        </label>
+                                        <button onClick={generateIdentity} className="w-full py-3 bg-white text-black font-bold rounded-lg text-xs hover:bg-gray-200 transition-all">
+                                            Re-Map Personality ✨
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div className="glass p-6 rounded-2xl">
+                                <h3 className="text-xs font-bold text-gray-500 uppercase tracking-widest mb-4 flex items-center gap-2">
+                                    <Icon name="brain" className="text-pink-500" /> Neural Biography
+                                </h3>
+                                <p className="text-sm leading-relaxed text-gray-300 italic">
+                                    {identity.bio || "Initial scan required. Please re-map personality to generate digital persona metadata."}
+                                </p>
+                                <button 
+                                    onClick={speakBriefing} 
+                                    className={`mt-4 flex items-center gap-2 text-xs font-bold px-4 py-2 rounded-full border border-indigo-500/30 hover:bg-indigo-500/10 transition-all ${isSpeaking ? 'animate-pulse text-indigo-400' : 'text-gray-400'}`}
+                                >
+                                    <Icon name="voice" /> {isSpeaking ? "Broadcasting..." : "Vocal Briefing"}
+                                </button>
+                            </div>
+                        </section>
+
+                        {/* RIGHT: Asset Factory */}
+                        <section className="lg:col-span-8 space-y-8">
+                            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                                <button onClick={() => generateAsset('Gaming Skin')} className="glass p-4 rounded-xl flex flex-col items-center hover:bg-white/5 transition-all group">
+                                    <div className="p-3 bg-blue-500/10 rounded-full mb-2 group-hover:scale-110 transition-transform">
+                                        <Icon name="zap" className="text-blue-500" />
+                                    </div>
+                                    <span className="text-xs font-bold">Gaming Skin</span>
+                                </button>
+                                <button onClick={() => generateAsset('Physical Merch')} className="glass p-4 rounded-xl flex flex-col items-center hover:bg-white/5 transition-all group">
+                                    <div className="p-3 bg-pink-500/10 rounded-full mb-2 group-hover:scale-110 transition-transform">
+                                        <Icon name="camera" className="text-pink-500" />
+                                    </div>
+                                    <span className="text-xs font-bold">Physical Merch</span>
+                                </button>
+                                <button onClick={() => generateAsset('Virtual Avatar')} className="glass p-4 rounded-xl flex flex-col items-center hover:bg-white/5 transition-all group">
+                                    <div className="p-3 bg-emerald-500/10 rounded-full mb-2 group-hover:scale-110 transition-transform">
+                                        <Icon name="brain" className="text-emerald-500" />
+                                    </div>
+                                    <span className="text-xs font-bold">Virtual Avatar</span>
+                                </button>
+                            </div>
+
+                            <div className="space-y-4">
+                                <h3 className="text-lg font-bold">Asset Vault</h3>
+                                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                    {assets.map(asset => (
+                                        <div key={asset.id} className="glass rounded-2xl overflow-hidden flex flex-col h-full animate-in fade-in slide-in-from-bottom-4 duration-500">
+                                            <div className="aspect-video w-full bg-slate-900 relative">
+                                                <img src={asset.url} className="w-full h-full object-cover" />
+                                                <div className="absolute top-2 right-2 px-2 py-1 bg-black/50 backdrop-blur rounded text-[10px] mono">
+                                                    #{asset.id.toString().slice(-4)}
+                                                </div>
+                                            </div>
+                                            <div className="p-4 flex-1">
+                                                <h4 className="font-bold text-sm mb-1">{asset.type}</h4>
+                                                <p className="text-[10px] text-gray-500 mb-4">{asset.caption}</p>
+                                                <div className="flex gap-2">
+                                                    <a href={asset.url} download={`LMA_${asset.id}.png`} className="text-[10px] font-bold bg-white text-black px-3 py-2 rounded flex-1 text-center">Export</a>
+                                                    <button className="text-[10px] font-bold border border-white/10 px-3 py-2 rounded flex-1">Licensing</button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    ))}
+                                    {assets.length === 0 && (
+                                        <div className="col-span-2 h-64 border border-dashed border-white/10 rounded-2xl flex items-center justify-center flex-col text-gray-600">
+                                            <Icon name="zap" className="mb-2 opacity-20" size={48} />
+                                            <p className="text-xs uppercase tracking-widest">Vault Empty. Initiate Synthesis.</p>
+                                        </div>
+                                    )}
+                                </div>
+                            </div>
+                        </section>
+                    </main>
+
+                    {/* Footer Stats */}
+                    <footer className="w-full max-w-6xl mt-12 grid grid-cols-2 md:grid-cols-4 gap-4 pb-10">
+                        <div className="glass p-4 rounded-xl text-center">
+                            <p className="text-[9px] uppercase text-gray-500 mb-1">Market Reach</p>
+                            <p className="text-xl font-bold italic">1.2M+</p>
+                        </div>
+                        <div className="glass p-4 rounded-xl text-center">
+                            <p className="text-[9px] uppercase text-gray-500 mb-1">Revenue Pool</p>
+                            <p className="text-xl font-bold text-emerald-400 mono">$42.8k</p>
+                        </div>
+                        <div className="glass p-4 rounded-xl text-center">
+                            <p className="text-[9px] uppercase text-gray-500 mb-1">Active Twins</p>
+                            <p className="text-xl font-bold text-indigo-400">04</p>
+                        </div>
+                        <div className="glass p-4 rounded-xl text-center">
+                            <p className="text-[9px] uppercase text-gray-500 mb-1">System Load</p>
+                            <p className="text-xl font-bold text-red-400">12%</p>
+                        </div>
+                    </footer>
+                </div>
+            );
+        };
+
+        const root = ReactDOM.createRoot(document.getElementById('root'));
+        root.render(<App />);
+    </script>
+</body>
+</html>
