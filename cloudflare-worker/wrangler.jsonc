@@ -21,7 +21,8 @@
     "XXXOOO_MCP_URL": "https://xxxooo.odoo.com/mcp",
     "XOXO_ODOO_URL": "https://xoxoxo.odoo.com",
     "XOXO_ODOO_DB": "xoxoxo",
-    "XOXO_UID": "2"
+    "XOXO_UID": "2",
+    "ASSETID_PROTOCOL_URL": "https://assetidprotocol.message-0ad.workers.dev"
   }
   // ---------------------------------------------------------------------------
   // REQUIRED SECRETS — set via `npx wrangler secret put <NAME>` (never commit values):
@@ -31,7 +32,12 @@
   //   GEMINI_API_KEY          Google Gemini API key (default cloud LLM provider)
   // Optional secrets:
   //   MOONSHOT_API_KEY        Kimi (Moonshot) API key — provider "kimi"
-  //   XAI_API_KEY             xAI API key — provider "grok"
+  //   XAI_API_KEY / XAI_LMA_API_KEY  xAI key (grok text + Imagine images; either name works)
+  //   VERTEX_GOOGLE_API_KEY   Google Vertex API key (reserved for Vertex-native calls)
+  //   GEMINI_GOOGLE_API_KEY   Secondary Google AI Studio key
+  //   CIVITAI_API_XOXO        CivitAI API key (model assets)
+  //   ELEVENLABS_API_XOXO     ElevenLabs key (voice twin)
+  //   RUNPOD_API_ATX_XOXO_2 / RUNPOD_API_META_XOXO  RunPod GPU keys
   //   HIBP_API_KEY            HaveIBeenPwned API key (also accepts HaveIBeenPwned_API)
   //   RUNPOD_API              RunPod cloud GPU API key
   //   VAST_API                Vast.ai GPU network API key

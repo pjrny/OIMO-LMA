@@ -10,7 +10,9 @@
  */
 
 import { odooExecuteKw, getOdooInstance, odooMcpTool, isOdooAuthError } from "./odoo";
-import { runCloudLLM } from "./llm";
+import { runCloudLLM, xaiKey } from "./llm";
+import { editWithRefs, validateImagineInput } from "./mas";
+import { assetIdProxy, assetIdBase } from "./assetid";
 import { runOsintScan } from "./osint";
 import { verifyAgeToken } from "./age";
 import { dispatchGpuTask } from "./gpu";
@@ -23,11 +25,18 @@ export interface Env {
   AI_PROVIDER?: string;
   // Cloud LLM secrets
   GEMINI_API_KEY?: string;
+  GEMINI_GOOGLE_API_KEY?: string;
+  VERTEX_GOOGLE_API_KEY?: string;
   GEMINI_MODEL?: string;
   MOONSHOT_API_KEY?: string;
   KIMI_MODEL?: string;
   XAI_API_KEY?: string;
+  // The dashboard holds the xAI key under this name; llm.ts accepts either.
+  XAI_LMA_API_KEY?: string;
   GROK_MODEL?: string;
+  XAI_IMAGINE_MODEL?: string;
+  // AssetID Protocol registry (deployed on the 0adf Cloudflare account)
+  ASSETID_PROTOCOL_URL?: string;
   // ERP Odoo instance (xxxooo.odoo.com)
   XXXOOO_ODOO_URL: string;
   XXXOOO_ODOO_DB: string;
@@ -101,8 +110,14 @@ export default {
           service: "ok-mas-lma-oimo-x",
           erp_odoo: env.XXXOOO_ODOO_URL || "https://xxxooo.odoo.com",
           mcp_server: env.XXXOOO_MCP_URL || "https://xxxooo.odoo.com/mcp",
-          locker_odoo: env.XOXO_ODOO_URL || "https://xoxo.odoo.com",
+          locker_odoo: env.XOXO_ODOO_URL || "https://xoxoxo.odoo.com",
           llm_mode: `${llmMode}-api-cloud`,
+          llm_providers: {
+            gemini: Boolean(env.GEMINI_API_KEY || env.GEMINI_GOOGLE_API_KEY),
+            grok_text: Boolean(xaiKey(env)),
+            grok_imagine: Boolean(xaiKey(env)),
+          },
+          assetid_registry: assetIdBase(env),
         });
       }
 
@@ -291,6 +306,72 @@ export default {
           return jsonResponse({ ok: true, identityName, xoxoSync: output });
         } catch (err: any) {
           return jsonResponse({ ok: false, error: err.message }, 500);
+        }
+      }
+
+      // 5b. MAS generator — xAI Imagine likeness generation (one input -> image output).
+      // Ported from pjrny/mas-lma-oimo-ok (grok build) src/lib/generate.ts.
+      if (path === "/api/mas/imagine" && method === "POST") {
+        try {
+          const input = validateImagineInput(await request.json());
+          const result = await editWithRefs(input.prompt, input.images, env);
+          return jsonResponse({ ok: true, model: result.model, imageDataUrl: result.imageDataUrl, degraded: result.degraded ?? null });
+        } catch (err: any) {
+          return jsonResponse({ ok: false, error: err.message }, 500);
+        }
+      }
+
+      if (path === "/api/mas/status" && method === "GET") {
+        return jsonResponse({
+          ok: true,
+          xai_configured: Boolean(xaiKey(env)),
+          imagine_model: env.XAI_IMAGINE_MODEL || "grok-imagine-image-2.0",
+        });
+      }
+
+      // 5c. AssetID Protocol proxy — registry + identification live on the 0adf
+      // account worker; forward register/identify/verify calls over HTTPS.
+      if (path === "/api/assetid/status" && method === "GET") {
+        try {
+          const res = await fetch(`${assetIdBase(env)}/api/health`, { signal: AbortSignal.timeout(15_000) });
+          const data: any = await res.json().catch(() => ({}));
+          return jsonResponse({ ok: res.ok, registry: assetIdBase(env), upstream: data });
+        } catch (err: any) {
+          return jsonResponse({ ok: false, registry: assetIdBase(env), error: err.message }, 502);
+        }
+      }
+
+      if (path.startsWith("/api/assetid/")) {
+        const sub = path.slice("/api/assetid".length); // e.g. "/register", "/assets/AST-xxx"
+        const proxiable =
+          (sub === "/register" && method === "POST") ||
+          (sub === "/identify" && method === "POST") ||
+          (sub === "/visual-identify" && method === "POST") ||
+          (sub.startsWith("/assets/") && method === "GET");
+        if (!proxiable) {
+          return jsonResponse({ ok: false, error: "Unsupported AssetID proxy route" }, 404);
+        }
+        try {
+          const upstreamPath = sub === "/register" ? "/api/assets" : `/api${sub}`;
+          return await assetIdProxy(upstreamPath, request, env);
+        } catch (err: any) {
+          return jsonResponse({ ok: false, error: `AssetID proxy failed: ${err.message}` }, 502);
+        }
+      }
+
+      // 5d. AssetID public verify page — serves the registry passport HTML.
+      if (path.startsWith("/assetid/verify/") && method === "GET") {
+        const id = path.slice("/assetid/verify/".length);
+        try {
+          const res = await fetch(`${assetIdBase(env)}/verify/${encodeURIComponent(id)}`, {
+            signal: AbortSignal.timeout(15_000),
+          });
+          return new Response(res.body, {
+            status: res.status,
+            headers: { "content-type": res.headers.get("content-type") || "text/html" },
+          });
+        } catch (err: any) {
+          return jsonResponse({ ok: false, error: `AssetID verify failed: ${err.message}` }, 502);
         }
       }
 

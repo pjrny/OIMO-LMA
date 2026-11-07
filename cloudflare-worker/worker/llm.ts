@@ -18,7 +18,14 @@ export interface LLMEnv {
   MOONSHOT_API_KEY?: string;
   KIMI_MODEL?: string;
   XAI_API_KEY?: string;
+  // The dashboard holds the xAI key under this name; accept either.
+  XAI_LMA_API_KEY?: string;
   GROK_MODEL?: string;
+}
+
+/** Resolve the xAI key across its known dashboard/CLI names. */
+export function xaiKey(env: LLMEnv): string | undefined {
+  return env.XAI_API_KEY || env.XAI_LMA_API_KEY;
 }
 
 export interface LLMResult {
@@ -75,7 +82,7 @@ async function runOpenAICompatible(
   env: LLMEnv
 ): Promise<LLMResult> {
   const isKimi = provider === "kimi";
-  const apiKey = isKimi ? env.MOONSHOT_API_KEY : env.XAI_API_KEY;
+  const apiKey = isKimi ? env.MOONSHOT_API_KEY : xaiKey(env);
   const endpoint = isKimi
     ? "https://api.moonshot.ai/v1/chat/completions"
     : "https://api.x.ai/v1/chat/completions";
