@@ -9,7 +9,7 @@
  * All credentials come from env bindings / secrets only — never hardcoded.
  */
 
-import { odooExecuteKw, getOdooInstance } from "./odoo";
+import { odooExecuteKw, getOdooInstance, odooMcpTool, isOdooAuthError } from "./odoo";
 import { runCloudLLM } from "./llm";
 import { runOsintScan } from "./osint";
 import { verifyAgeToken } from "./age";
@@ -401,23 +401,44 @@ export default {
           if (!userId) {
             return jsonResponse({ ok: false, error: "Missing required query param: user_id" }, 400);
           }
+          const id = parseInt(userId, 10);
           const { baseUrl, db, uid, apiKey } = getOdooInstance("erp", env);
-          const records = await odooExecuteKw(
-            baseUrl,
-            db,
-            uid,
-            apiKey,
-            "ai.creator.subscriber",
-            "search_read",
-            [[["id", "=", parseInt(userId, 10)]]],
-            { fields: ["name", "tier", "age_verified", "compute_credits"], limit: 1 }
-          );
-          if (!records || records.length === 0) {
+          let subscriber: any;
+          let via: "xmlrpc" | "mcp" = "xmlrpc";
+          try {
+            const records = await odooExecuteKw(
+              baseUrl,
+              db,
+              uid,
+              apiKey,
+              "ai.creator.subscriber",
+              "search_read",
+              [[["id", "=", id]]],
+              { fields: ["name", "tier", "age_verified", "compute_credits"], limit: 1 }
+            );
+            subscriber = records && records[0];
+          } catch (rpcErr: any) {
+            // XML-RPC API key revoked/expired? Fall back to the native MCP server
+            // (read-only) so status lookups keep working until the key is rotated.
+            if (!isOdooAuthError(rpcErr) || !env.XXXOOO_MCP_KEY || !env.XXXOOO_MCP_URL) {
+              throw rpcErr;
+            }
+            const mcpResult = await odooMcpTool(env.XXXOOO_MCP_URL, env.XXXOOO_MCP_KEY, "ai_tool_search", {
+              model_name: "ai.creator.subscriber",
+              domain: `[("id","=",${id})]`,
+              fields: ["name", "tier", "age_verified", "compute_credits"],
+              limit: 1,
+            });
+            const records = mcpResult?.response?.records ?? mcpResult?.records;
+            subscriber = Array.isArray(records) ? records[0] : undefined;
+            via = "mcp";
+          }
+          if (!subscriber) {
             return jsonResponse({ ok: false, error: "User not found" }, 404);
           }
-          const subscriber = records[0];
           return jsonResponse({
             ok: true,
+            via,
             id: subscriber.id,
             name: subscriber.name,
             tier: subscriber.tier,
