@@ -3,7 +3,7 @@
  *
  * Two Odoo instances are in play:
  *  - "erp"    -> xxxooo.odoo.com (identity entities, accounting, discuss, MCP)
- *  - "locker" -> xoxo.odoo.com  (media locker attachments + LMS courses)
+ *  - "locker" -> xoxoxo.odoo.com (media locker attachments + LMS courses)
  */
 
 export interface OdooInstance {
