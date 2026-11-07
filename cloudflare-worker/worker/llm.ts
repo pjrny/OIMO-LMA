@@ -27,7 +27,9 @@ export interface LLMResult {
   reply: string;
 }
 
-const GEMINI_DEFAULT_MODEL = "gemini-2.5-flash";
+// gemini-2.5-flash is retired for new API users; 3.1-flash-lite is the current
+// free-tier workhorse. Override with the GEMINI_MODEL var at any time.
+const GEMINI_DEFAULT_MODEL = "gemini-3.1-flash-lite";
 const KIMI_DEFAULT_MODEL = "kimi-k2-0905-preview";
 const GROK_DEFAULT_MODEL = "grok-3";
 
