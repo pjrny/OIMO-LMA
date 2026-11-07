@@ -2,12 +2,12 @@
   "name": "ok-mas-lma-oimo-x",
   "main": "worker/index.ts",
   "compatibility_date": "2025-03-01",
-  "r2_buckets": [
-    {
-      "binding": "MEDIA_LOCKER",
-      "bucket_name": "lma-mas-media"
-    }
-  ],
+  // R2 binding temporarily disabled: account 6c5f8a2e10e1f65fa308bafb1583cf89 does
+  // not have R2 enabled yet (API code 10042). Re-enable after turning on R2 in the
+  // dashboard; code guards `env.MEDIA_LOCKER` so the worker runs fine without it.
+  // "r2_buckets": [
+  //   { "binding": "MEDIA_LOCKER", "bucket_name": "lma-mas-media" }
+  // ],
   // Bundle .html files as Text modules so worker/index.ts can import deck.html.
   "rules": [
     {
