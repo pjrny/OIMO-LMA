@@ -1,0 +1,5 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+# Read-only access for internal users on both models. Controllers use sudo(),
+# so no public (base.group_public) grants are needed; keep surface minimal.
+access_ai_creator_subscriber_user,ai.creator.subscriber.user,model_ai_creator_subscriber,base.group_user,1,0,0,0
+access_ai_osint_audit_user,ai.osint.audit.user,model_ai_osint_audit,base.group_user,1,0,0,0

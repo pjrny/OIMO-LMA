@@ -1,0 +1,928 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Creator Platform — Investment Memorandum & Strategy Deck</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Chart.js CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        sand: {
+                            50: '#fdfbf7',
+                            100: '#f7f4ed',
+                            200: '#ece5d8',
+                            800: '#433d35',
+                            900: '#28241f',
+                        },
+                        brand: {
+                            slate: '#1e293b',
+                            indigo: '#4f46e5',
+                            emerald: '#059669',
+                            rose: '#e11d48',
+                            amber: '#d97706'
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        .chart-container {
+            position: relative;
+            width: 100%;
+            max-width: 650px;
+            margin-left: auto;
+            margin-right: auto;
+            height: 320px;
+            max-height: 400px;
+        }
+        @media (min-width: 768px) {
+            .chart-container {
+                height: 360px;
+            }
+        }
+        /* Custom scrollbar */
+        ::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #f1f1f1;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #94a3b8;
+        }
+    </style>
+</head>
+<body class="bg-sand-50 text-slate-800 font-sans antialiased leading-relaxed">
+
+    <!-- Top Navigation Header -->
+    <header class="sticky top-0 z-50 bg-white/90 backdrop-blur-md border-b border-sand-200 shadow-sm">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-16">
+                <div class="flex items-center space-x-3">
+                    <div class="w-9 h-9 bg-brand-indigo rounded-lg flex items-center justify-center text-white font-bold text-lg shadow">
+                        ⚡
+                    </div>
+                    <div>
+                        <span class="font-bold text-slate-900 text-lg tracking-tight block">AI Creator Platform</span>
+                        <span class="text-xs text-slate-500 font-medium">Investment & Architecture Deck</span>
+                    </div>
+                </div>
+                
+                <!-- Desktop Nav -->
+                <nav class="hidden md:flex space-x-1 lg:space-x-2 text-sm font-medium text-slate-600">
+                    <button onclick="scrollToSection('capital')" class="px-3 py-2 rounded-md hover:bg-sand-100 hover:text-slate-900 transition">Capital ($30K)</button>
+                    <button onclick="scrollToSection('financials')" class="px-3 py-2 rounded-md hover:bg-sand-100 hover:text-slate-900 transition">Financials & MRR</button>
+                    <button onclick="scrollToSection('architecture')" class="px-3 py-2 rounded-md hover:bg-sand-100 hover:text-slate-900 transition">Architecture</button>
+                    <button onclick="scrollToSection('tiers')" class="px-3 py-2 rounded-md hover:bg-sand-100 hover:text-slate-900 transition">Unit Economics</button>
+                    <button onclick="scrollToSection('journeys')" class="px-3 py-2 rounded-md hover:bg-sand-100 hover:text-slate-900 transition">User Journeys</button>
+                    <button onclick="scrollToSection('legal')" class="px-3 py-2 rounded-md hover:bg-sand-100 hover:text-slate-900 transition">Legal & Compliance</button>
+                </nav>
+
+                <div class="flex items-center">
+                    <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold bg-emerald-100 text-emerald-800 border border-emerald-200">
+                        ● Target: $3K Net/mo
+                    </span>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content Body -->
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-16">
+
+        <!-- Hero Overview Section -->
+        <section class="bg-gradient-to-br from-slate-900 via-slate-800 to-indigo-950 text-white rounded-2xl p-6 sm:p-10 shadow-xl relative overflow-hidden">
+            <div class="max-w-3xl space-y-4 relative z-10">
+                <div class="inline-flex items-center space-x-2 px-3 py-1 rounded-full bg-indigo-500/20 text-indigo-300 text-xs font-semibold border border-indigo-500/30">
+                    <span>🚀 Seed Stage Memorandum</span>
+                    <span>•</span>
+                    <span>Texas CUBI Compliant</span>
+                </div>
+                <h1 class="text-3xl sm:text-5xl font-extrabold tracking-tight text-white leading-tight">
+                    0% Royalty AI Creator Operating System
+                </h1>
+                <p class="text-slate-300 text-base sm:text-lg">
+                    Disrupting creator monetization by eliminating traditional 20-30% platform taxes. Powered by Cloudflare Edge, Odoo ERP, and a hybrid local/cloud GPU rendering matrix.
+                </p>
+                
+                <div class="grid grid-cols-2 sm:grid-cols-4 gap-4 pt-4 border-t border-slate-700/60">
+                    <div>
+                        <span class="text-xs text-slate-400 block uppercase tracking-wider font-semibold">Initial Seed Capital</span>
+                        <span class="text-xl sm:text-2xl font-bold text-amber-400">$30,000</span>
+                    </div>
+                    <div>
+                        <span class="text-xs text-slate-400 block uppercase tracking-wider font-semibold">Phase 1 MRR Goal</span>
+                        <span class="text-xl sm:text-2xl font-bold text-emerald-400">$3,000 / mo</span>
+                    </div>
+                    <div>
+                        <span class="text-xs text-slate-400 block uppercase tracking-wider font-semibold">Phase 1 Net Profit</span>
+                        <span class="text-xl sm:text-2xl font-bold text-emerald-400">$3,000 / mo</span>
+                    </div>
+                    <div>
+                        <span class="text-xs text-slate-400 block uppercase tracking-wider font-semibold">Creator Royalty Tax</span>
+                        <span class="text-xl sm:text-2xl font-bold text-indigo-400">0.0%</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- SECTION 1: Executive Summary & $30K Capital Allocation Strategy -->
+        <section id="capital" class="space-y-6">
+            <div class="border-b border-sand-200 pb-4">
+                <h2 class="text-2xl sm:text-3xl font-bold text-slate-900">1. $30K Capital Allocation Strategy</h2>
+                <p class="text-slate-600 mt-1">
+                    This section details how the $30,000 initial seed capital is deployed to reach Phase 1 self-sustainability without incurring high fixed overheads or premature server costs.
+                </p>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
+                <!-- Interactive Chart Container -->
+                <div class="lg:col-span-5 bg-white p-6 rounded-xl border border-sand-200 shadow-sm">
+                    <h3 class="text-lg font-bold text-slate-800 mb-2 text-center">Capital Allocation Breakdown</h3>
+                    <div class="chart-container">
+                        <canvas id="capitalChart"></canvas>
+                    </div>
+                    <p class="text-xs text-slate-500 text-center mt-3 italic">Hover or tap segments to inspect deployment funds.</p>
+                </div>
+
+                <!-- Table & Explanation -->
+                <div class="lg:col-span-7 bg-white p-6 rounded-xl border border-sand-200 shadow-sm overflow-x-auto">
+                    <h3 class="text-lg font-bold text-slate-800 mb-4">Capital Allocation Master Ledger</h3>
+                    <table class="w-full text-left text-xs sm:text-sm">
+                        <thead class="bg-slate-50 border-b border-sand-200 text-slate-600 font-semibold">
+                            <tr>
+                                <th class="p-2.5">Category</th>
+                                <th class="p-2.5">Amount</th>
+                                <th class="p-2.5">Strategic Operational Purpose</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-sand-100 text-slate-700">
+                            <tr class="hover:bg-sand-50 transition">
+                                <td class="p-2.5 font-semibold text-slate-900">Legal & Compliance</td>
+                                <td class="p-2.5 font-bold text-indigo-600">$3,500</td>
+                                <td class="p-2.5">Texas LLC formation, CUBI / HB 1181 privacy terms, C2PA private key setup</td>
+                            </tr>
+                            <tr class="hover:bg-sand-50 transition">
+                                <td class="p-2.5 font-semibold text-slate-900">Merchant & Payment Setup</td>
+                                <td class="p-2.5 font-bold text-indigo-600">$2,000</td>
+                                <td class="p-2.5">High-risk merchant onboarding (CCBill/Epoch/Segpay) & crypto merchant setup</td>
+                            </tr>
+                            <tr class="hover:bg-sand-50 transition">
+                                <td class="p-2.5 font-semibold text-slate-900">ID Verification Float</td>
+                                <td class="p-2.5 font-bold text-indigo-600">$2,500</td>
+                                <td class="p-2.5">Pre-funded API float for 1,500–2,000 Yoti/Ondato 18+ zero-retention ID checks</td>
+                            </tr>
+                            <tr class="hover:bg-sand-50 transition">
+                                <td class="p-2.5 font-semibold text-slate-900">Local Hardware Refurbishment</td>
+                                <td class="p-2.5 font-bold text-indigo-600">$1,500</td>
+                                <td class="p-2.5">Upgrading 3 existing PCs (GPUs, RAM, NVMe) for 24/7 freemium queue rendering</td>
+                            </tr>
+                            <tr class="hover:bg-sand-50 transition">
+                                <td class="p-2.5 font-semibold text-slate-900">Cloud Compute Reserve Float</td>
+                                <td class="p-2.5 font-bold text-indigo-600">$4,500</td>
+                                <td class="p-2.5">Reserved float for elastic cloud GPU bursts (RunPod/Vast.ai) for paying users</td>
+                            </tr>
+                            <tr class="hover:bg-sand-50 transition">
+                                <td class="p-2.5 font-semibold text-slate-900">Aggressive Growth & Media</td>
+                                <td class="p-2.5 font-bold text-indigo-600">$10,000</td>
+                                <td class="p-2.5">3 press releases, cold email infrastructure, affiliate recruitment, ad placements</td>
+                            </tr>
+                            <tr class="hover:bg-sand-50 transition">
+                                <td class="p-2.5 font-semibold text-slate-900">Operational Buffer & Runway</td>
+                                <td class="p-2.5 font-bold text-indigo-600">$6,000</td>
+                                <td class="p-2.5">6-month buffer for domains, proxies, Cloudflare paid add-ons, and DB hosting</td>
+                            </tr>
+                        </tbody>
+                        <tfoot class="bg-slate-100 font-bold text-slate-900 border-t border-slate-300">
+                            <tr>
+                                <td class="p-2.5">Total Deployment</td>
+                                <td class="p-2.5 text-emerald-600">$30,000</td>
+                                <td class="p-2.5 text-xs text-slate-500">Fully capitalized to reach Phase 1 self-sustainability</td>
+                            </tr>
+                        </tfoot>
+                    </table>
+                </div>
+            </div>
+        </section>
+
+        <!-- SECTION 2: Financial Engine & Milestone Tracker -->
+        <section id="financials" class="space-y-6">
+            <div class="border-b border-sand-200 pb-4">
+                <h2 class="text-2xl sm:text-3xl font-bold text-slate-900">2. Financial Trajectory & Interactive Milestone Simulator</h2>
+                <p class="text-slate-600 mt-1">
+                    Explore revenue trajectory and net profit modeling under standard vs ultra-conservative scenarios. Adjust parameters to test growth resilience.
+                </p>
+            </div>
+
+            <!-- Simulator Controls -->
+            <div class="bg-white p-6 rounded-xl border border-sand-200 shadow-sm grid grid-cols-1 md:grid-cols-3 gap-6">
+                <div>
+                    <label class="block text-xs font-bold uppercase tracking-wider text-slate-600 mb-2">Scenario Model Select</label>
+                    <select id="scenarioSelect" onchange="updateFinancialSimulation()" class="w-full bg-sand-50 border border-sand-200 rounded-lg p-2.5 text-sm font-semibold text-slate-800 focus:ring-2 focus:ring-indigo-500">
+                        <option value="conservative" selected>Ultra-Conservative (2% KYC, 1.5% Paid, 25% Churn)</option>
+                        <option value="standard">Standard Benchmark (5% KYC, 3% Paid, 20% Churn)</option>
+                    </select>
+                    <p class="text-xs text-slate-500 mt-1">Controls conversion drop-off and monthly customer churn rates.</p>
+                </div>
+
+                <div>
+                    <label class="block text-xs font-bold uppercase tracking-wider text-slate-600 mb-2">Monthly Traffic Scale (Unique Visitors)</label>
+                    <input type="range" id="trafficSlider" min="10000" max="40000" step="2500" value="28500" oninput="updateFinancialSimulation()" class="w-full accent-indigo-600">
+                    <div class="flex justify-between text-xs font-semibold text-slate-700 mt-1">
+                        <span>10,000 / mo</span>
+                        <span id="trafficValue" class="text-indigo-600 font-bold">28,500 / mo</span>
+                        <span>40,000 / mo</span>
+                    </div>
+                </div>
+
+                <div class="bg-sand-50 p-4 rounded-lg border border-sand-200 flex flex-col justify-between">
+                    <div>
+                        <span class="text-xs text-slate-500 font-semibold uppercase block">Simulated Net Profit / Mo</span>
+                        <span id="simNetProfit" class="text-2xl font-extrabold text-emerald-600">$3,037 / mo</span>
+                    </div>
+                    <span id="simStatusBadge" class="text-xs font-bold px-2 py-0.5 rounded bg-emerald-100 text-emerald-800 inline-block w-fit">
+                        ✓ Milestone 4 Target Met
+                    </span>
+                </div>
+            </div>
+
+            <!-- Financial Chart & Milestones Display -->
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
+                <div class="lg:col-span-7 bg-white p-6 rounded-xl border border-sand-200 shadow-sm">
+                    <h3 class="text-lg font-bold text-slate-800 mb-2">MRR & Net Profit Trajectory ($)</h3>
+                    <div class="chart-container">
+                        <canvas id="financialChart"></canvas>
+                    </div>
+                </div>
+
+                <div class="lg:col-span-5 space-y-4">
+                    <h3 class="text-lg font-bold text-slate-800">Operational Milestone Roadmap</h3>
+                    
+                    <div class="space-y-3">
+                        <div class="p-4 rounded-lg border border-sand-200 bg-white hover:border-indigo-300 transition shadow-sm">
+                            <div class="flex justify-between items-center">
+                                <span class="font-bold text-sm text-slate-900">Milestone 1: Proof of Funnel</span>
+                                <span class="text-xs font-bold px-2 py-0.5 rounded bg-slate-100 text-slate-700">~10,000 Visitors</span>
+                            </div>
+                            <p class="text-xs text-slate-600 mt-1">200 Verified Freemium Accounts • 3 Pro Subscribers • <strong>~$250 / mo MRR</strong></p>
+                        </div>
+
+                        <div class="p-4 rounded-lg border border-sand-200 bg-white hover:border-indigo-300 transition shadow-sm">
+                            <div class="flex justify-between items-center">
+                                <span class="font-bold text-sm text-slate-900">Milestone 2: $1K MRR Threshold</span>
+                                <span class="text-xs font-bold px-2 py-0.5 rounded bg-slate-100 text-slate-700">~18,000 Visitors</span>
+                            </div>
+                            <p class="text-xs text-slate-600 mt-1">360 Active Verified Accounts • 15 Pro + 1 Agency • <strong>~$984 / mo MRR</strong></p>
+                        </div>
+
+                        <div class="p-4 rounded-lg border border-sand-200 bg-white hover:border-indigo-300 transition shadow-sm">
+                            <div class="flex justify-between items-center">
+                                <span class="font-bold text-sm text-slate-900">Milestone 3: $3K Gross Revenue</span>
+                                <span class="text-xs font-bold px-2 py-0.5 rounded bg-slate-100 text-slate-700">~28,500 Visitors</span>
+                            </div>
+                            <p class="text-xs text-slate-600 mt-1">1,200 Active Verified Accounts • 35 Pro + 5 Agency • <strong>~$2,960 / mo MRR</strong></p>
+                        </div>
+
+                        <div class="p-4 rounded-lg border-2 border-emerald-500 bg-emerald-50/50 shadow-sm">
+                            <div class="flex justify-between items-center">
+                                <span class="font-bold text-sm text-emerald-950">Milestone 4: TARGET ACHIEVED ($3K NET)</span>
+                                <span class="text-xs font-bold px-2 py-0.5 rounded bg-emerald-200 text-emerald-900">~38,000 Visitors</span>
+                            </div>
+                            <p class="text-xs text-emerald-800 mt-1">1,800 Active Verified Accounts • 50 Pro + 8 Agency • <strong>$4,442 Gross / $3,037 NET PROFIT</strong></p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- SECTION 3: System Architecture & Infrastructure Topology -->
+        <section id="architecture" class="space-y-6">
+            <div class="border-b border-sand-200 pb-4">
+                <h2 class="text-2xl sm:text-3xl font-bold text-slate-900">3. System Architecture & Tech Stack Topology</h2>
+                <p class="text-slate-600 mt-1">
+                    A decoupled frontend/backend topology split between Cloudflare Edge Services and a self-hosted Odoo ERP chassis, orchestrated by Model Context Protocols (MCPs).
+                </p>
+            </div>
+
+            <!-- Architecture Flow Interactive Diagram -->
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-4 text-center">
+                <div onclick="showTechDetail('client')" class="bg-white p-5 rounded-xl border-2 border-indigo-100 hover:border-indigo-500 cursor-pointer transition shadow-sm hover:shadow">
+                    <div class="text-2xl mb-2">📱</div>
+                    <h4 class="font-bold text-slate-900 text-sm">1. Client Layer</h4>
+                    <p class="text-xs text-slate-500 mt-1">Cloudflare Pages PWA & Bio-Link Portals</p>
+                </div>
+
+                <div onclick="showTechDetail('edge')" class="bg-white p-5 rounded-xl border-2 border-indigo-100 hover:border-indigo-500 cursor-pointer transition shadow-sm hover:shadow">
+                    <div class="text-2xl mb-2">⚡</div>
+                    <h4 class="font-bold text-slate-900 text-sm">2. Edge Proxy & Cache</h4>
+                    <p class="text-xs text-slate-500 mt-1">Cloudflare Workers, D1 Cache & R2 Vault</p>
+                </div>
+
+                <div onclick="showTechDetail('erp')" class="bg-white p-5 rounded-xl border-2 border-indigo-100 hover:border-indigo-500 cursor-pointer transition shadow-sm hover:shadow">
+                    <div class="text-2xl mb-2">⚙️</div>
+                    <h4 class="font-bold text-slate-900 text-sm">3. Core Business Engine</h4>
+                    <p class="text-xs text-slate-500 mt-1">Self-Hosted Odoo ERP Chassis</p>
+                </div>
+
+                <div onclick="showTechDetail('compute')" class="bg-white p-5 rounded-xl border-2 border-indigo-100 hover:border-indigo-500 cursor-pointer transition shadow-sm hover:shadow">
+                    <div class="text-2xl mb-2">🖥️</div>
+                    <h4 class="font-bold text-slate-900 text-sm">4. Hybrid GPU Matrix</h4>
+                    <p class="text-xs text-slate-500 mt-1">3 Local PCs + Cloud GPU Bursts</p>
+                </div>
+            </div>
+
+            <!-- Technical Detail Display Box -->
+            <div id="techDetailBox" class="bg-slate-900 text-white p-6 rounded-xl shadow-lg border border-slate-700">
+                <div class="flex justify-between items-start mb-3">
+                    <h3 id="techDetailTitle" class="text-lg font-bold text-indigo-400">Client & Presentation Layer</h3>
+                    <span class="text-xs bg-slate-800 text-slate-400 px-2 py-1 rounded border border-slate-700">Interactive Architecture Node</span>
+                </div>
+                <p id="techDetailDesc" class="text-sm text-slate-300 leading-relaxed">
+                    Responsive Progressive Web App (PWA) hosted on Cloudflare Pages. Provides ultra-fast static asset delivery, mobile-optimized creator bio-link portals, and responsive user dashboards with zero server overhead.
+                </p>
+                <div id="techDetailTags" class="flex flex-wrap gap-2 mt-4">
+                    <span class="text-xs bg-indigo-900/60 text-indigo-200 px-2.5 py-1 rounded font-mono border border-indigo-700">Cloudflare Pages</span>
+                    <span class="text-xs bg-indigo-900/60 text-indigo-200 px-2.5 py-1 rounded font-mono border border-indigo-700">PWA Manifest</span>
+                    <span class="text-xs bg-indigo-900/60 text-indigo-200 px-2.5 py-1 rounded font-mono border border-indigo-700">Tailwind CSS</span>
+                </div>
+            </div>
+
+            <!-- Tech Stack & Module Distribution Matrix -->
+            <div class="bg-white p-6 rounded-xl border border-sand-200 shadow-sm overflow-x-auto">
+                <h3 class="text-lg font-bold text-slate-800 mb-4">Technology & Module Distribution Matrix</h3>
+                <table class="w-full text-left text-xs sm:text-sm">
+                    <thead class="bg-slate-50 border-b border-sand-200 text-slate-600 font-semibold">
+                        <tr>
+                            <th class="p-2.5">Component / Function</th>
+                            <th class="p-2.5">Technology Layer</th>
+                            <th class="p-2.5">Operational Responsibility</th>
+                            <th class="p-2.5">Free Tier / Cost Threshold</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-sand-100 text-slate-700">
+                        <tr>
+                            <td class="p-2.5 font-semibold text-slate-900">Edge Web Router & Proxy</td>
+                            <td class="p-2.5 font-mono text-indigo-600">Cloudflare Workers</td>
+                            <td class="p-2.5">API proxy, rate limiting, free-tool token jumper, geo-routing</td>
+                            <td class="p-2.5 text-emerald-600 font-semibold">Free (100k req/day)</td>
+                        </tr>
+                        <tr>
+                            <td class="p-2.5 font-semibold text-slate-900">Zero-Egress Vault Storage</td>
+                            <td class="p-2.5 font-mono text-indigo-600">Cloudflare R2</td>
+                            <td class="p-2.5">Encrypted media storage, preview assets, course videos, C2PA manifests</td>
+                            <td class="p-2.5 text-emerald-600 font-semibold">Free (10 GB storage, 10M reads/mo)</td>
+                        </tr>
+                        <tr>
+                            <td class="p-2.5 font-semibold text-slate-900">Session & Token Cache</td>
+                            <td class="p-2.5 font-mono text-indigo-600">Cloudflare D1</td>
+                            <td class="p-2.5">Serverless SQL database caching age verification tokens and active sessions</td>
+                            <td class="p-2.5 text-emerald-600 font-semibold">Free (5M reads/day)</td>
+                        </tr>
+                        <tr>
+                            <td class="p-2.5 font-semibold text-slate-900">Business Engine & CRM</td>
+                            <td class="p-2.5 font-mono text-indigo-600">Odoo ERP Chassis</td>
+                            <td class="p-2.5">User accounts, CRM leads, accounting, order processing, subscriptions</td>
+                            <td class="p-2.5 text-emerald-600 font-semibold">Self-Hosted Open Source</td>
+                        </tr>
+                        <tr>
+                            <td class="p-2.5 font-semibold text-slate-900">Fan Locker & PPV Media</td>
+                            <td class="p-2.5 font-mono text-indigo-600">Odoo Discuss & Vault</td>
+                            <td class="p-2.5">Private subscriber channels, pay-per-view media unlocks, media locker</td>
+                            <td class="p-2.5 text-emerald-600 font-semibold">Native Odoo Module</td>
+                        </tr>
+                        <tr>
+                            <td class="p-2.5 font-semibold text-slate-900">Course & Masterclass Portal</td>
+                            <td class="p-2.5 font-mono text-indigo-600">Odoo LMS Module</td>
+                            <td class="p-2.5">Creator course authoring, video hosting integrations, student management</td>
+                            <td class="p-2.5 text-emerald-600 font-semibold">Native Odoo Module</td>
+                        </tr>
+                        <tr>
+                            <td class="p-2.5 font-semibold text-slate-900">AI Agent Connectors</td>
+                            <td class="p-2.5 font-mono text-indigo-600">Model Context Protocols</td>
+                            <td class="p-2.5"><code>odoo-mcp-pro</code> & <code>mcp-server-odoo</code> for AI ERP commands</td>
+                            <td class="p-2.5 text-emerald-600 font-semibold">Open-Source MCPs</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <!-- SECTION 4: User Tiers & Unit Economics -->
+        <section id="tiers" class="space-y-6">
+            <div class="border-b border-sand-200 pb-4">
+                <h2 class="text-2xl sm:text-3xl font-bold text-slate-900">4. User Tiers & Monthly Unit Economics</h2>
+                <p class="text-slate-600 mt-1">
+                    0% platform royalties on creator earnings paired with high-margin indirect monetization (SaaS subscriptions, token top-ups, dropshipping, and affiliate arbitrage).
+                </p>
+            </div>
+
+            <!-- Tier Unit Economics Visual Chart -->
+            <div class="bg-white p-6 rounded-xl border border-sand-200 shadow-sm">
+                <h3 class="text-lg font-bold text-slate-800 mb-2">Per-User Monthly Revenue vs. Direct Operational Cost ($)</h3>
+                <div class="chart-container">
+                    <canvas id="unitEconomicsChart"></canvas>
+                </div>
+            </div>
+
+            <!-- Comprehensive Tier Matrix -->
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                <!-- Tier 1 -->
+                <div class="bg-white p-5 rounded-xl border border-sand-200 shadow-sm flex flex-col justify-between">
+                    <div class="space-y-3">
+                        <span class="text-xs font-bold uppercase tracking-wider text-slate-500 bg-slate-100 px-2 py-1 rounded">Tier 1</span>
+                        <h3 class="text-xl font-bold text-slate-900">SFW Unverified</h3>
+                        <div class="text-2xl font-extrabold text-slate-800">FREE</div>
+                        <p class="text-xs text-slate-600">Email registration only. Access to standard SFW text chat, basic story scripts, public blog, and marketplace.</p>
+                        <ul class="text-xs text-slate-600 space-y-1.5 pt-2 border-t border-sand-100">
+                            <li>• Local Slow Queue generation</li>
+                            <li>• Dropship store browsing</li>
+                            <li>• Standard SFW character access</li>
+                        </ul>
+                    </div>
+                    <div class="pt-4 mt-4 border-t border-sand-200 text-xs font-semibold text-slate-500">
+                        Direct Cost: ~$0.03 / mo • Loss Leader
+                    </div>
+                </div>
+
+                <!-- Tier 2 -->
+                <div class="bg-white p-5 rounded-xl border border-indigo-200 shadow-sm flex flex-col justify-between relative">
+                    <span class="absolute -top-3 right-4 bg-indigo-600 text-white text-[10px] font-extrabold uppercase px-2 py-0.5 rounded-full shadow">Lead Gen Hook</span>
+                    <div class="space-y-3">
+                        <span class="text-xs font-bold uppercase tracking-wider text-indigo-600 bg-indigo-50 px-2 py-1 rounded">Tier 2</span>
+                        <h3 class="text-xl font-bold text-slate-900">NSFW Verified</h3>
+                        <div class="text-2xl font-extrabold text-indigo-600">FREE</div>
+                        <p class="text-xs text-slate-600">18+ Government ID & Liveness Check. Unlocks NSFW generation + Digital Footprint Exposure Check.</p>
+                        <ul class="text-xs text-slate-600 space-y-1.5 pt-2 border-t border-sand-100">
+                            <li>• 3-Hour Trial of Wan 2.2 / face swap</li>
+                            <li>• 1 Real Identity + 2 AI Characters</li>
+                            <li>• Custom Bio-Link Storefront</li>
+                        </ul>
+                    </div>
+                    <div class="pt-4 mt-4 border-t border-sand-200 text-xs font-semibold text-slate-500">
+                        Direct Cost: ~$1.50 ID (1-time) • Breakeven
+                    </div>
+                </div>
+
+                <!-- Tier 3 -->
+                <div class="bg-white p-5 rounded-xl border-2 border-emerald-500 shadow-sm flex flex-col justify-between relative">
+                    <span class="absolute -top-3 right-4 bg-emerald-600 text-white text-[10px] font-extrabold uppercase px-2 py-0.5 rounded-full shadow">Most Popular</span>
+                    <div class="space-y-3">
+                        <span class="text-xs font-bold uppercase tracking-wider text-emerald-600 bg-emerald-50 px-2 py-1 rounded">Tier 3</span>
+                        <h3 class="text-xl font-bold text-slate-900">Pro Monetizer</h3>
+                        <div class="text-2xl font-extrabold text-emerald-600">$49 <span class="text-xs font-normal text-slate-500">/ mo net</span></div>
+                        <p class="text-xs text-slate-600">For serious creators monetizing fans. Unlocks fast Cloud GPU queue and unwatermarked media.</p>
+                        <ul class="text-xs text-slate-600 space-y-1.5 pt-2 border-t border-sand-100">
+                            <li>• 5 AI Characters (C2PA Signed)</li>
+                            <li>• Wan 2.2 / LTX video cloud burst</li>
+                            <li>• Odoo CRM, LMS & Fan Locker</li>
+                        </ul>
+                    </div>
+                    <div class="pt-4 mt-4 border-t border-sand-200 text-xs font-bold text-emerald-600">
+                        Net Profit: +$30.99 / mo (63% Margin)
+                    </div>
+                </div>
+
+                <!-- Tier 4 -->
+                <div class="bg-white p-5 rounded-xl border border-slate-800 shadow-sm flex flex-col justify-between">
+                    <div class="space-y-3">
+                        <span class="text-xs font-bold uppercase tracking-wider text-slate-800 bg-slate-100 px-2 py-1 rounded">Tier 4</span>
+                        <h3 class="text-xl font-bold text-slate-900">Agency & Fleet</h3>
+                        <div class="text-2xl font-extrabold text-slate-900">$249 <span class="text-xs font-normal text-slate-500">/ mo net</span></div>
+                        <p class="text-xs text-slate-600">For agencies managing model fleets. Multiple human identities + unlimited AI avatars.</p>
+                        <ul class="text-xs text-slate-600 space-y-1.5 pt-2 border-t border-sand-100">
+                            <li>• Multiple Verified Human Identities</li>
+                            <li>• Anti-detect social auto-posting</li>
+                            <li>• Multi-user Odoo Agency Board</li>
+                        </ul>
+                    </div>
+                    <div class="pt-4 mt-4 border-t border-sand-200 text-xs font-bold text-emerald-600">
+                        Net Profit: +$160.98 / mo (64% Margin)
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- SECTION 5: Customer Journeys & Feature Matrix -->
+        <section id="journeys" class="space-y-6">
+            <div class="border-b border-sand-200 pb-4">
+                <h2 class="text-2xl sm:text-3xl font-bold text-slate-900">5. Essential Customer Journeys & Free Tools Engine</h2>
+                <p class="text-slate-600 mt-1">
+                    How users move through the conversion funnel, unlock privacy features, and engage with our automated credit aggregator.
+                </p>
+            </div>
+
+            <!-- Journey Selector Tabs -->
+            <div class="flex space-x-2 border-b border-sand-200 overflow-x-auto pb-2">
+                <button onclick="switchJourney('sfw')" id="tab-sfw" class="px-4 py-2 text-xs sm:text-sm font-bold rounded-lg bg-indigo-600 text-white shadow-sm">Flow A: SFW Visitor</button>
+                <button onclick="switchJourney('nsfw')" id="tab-nsfw" class="px-4 py-2 text-xs sm:text-sm font-bold rounded-lg bg-white text-slate-600 hover:bg-sand-100 border border-sand-200">Flow B: Verified NSFW</button>
+                <button onclick="switchJourney('pro')" id="tab-pro" class="px-4 py-2 text-xs sm:text-sm font-bold rounded-lg bg-white text-slate-600 hover:bg-sand-100 border border-sand-200">Flow C: Pro Creator</button>
+                <button onclick="switchJourney('aggregator')" id="tab-aggregator" class="px-4 py-2 text-xs sm:text-sm font-bold rounded-lg bg-white text-slate-600 hover:bg-sand-100 border border-sand-200">Free Credit Aggregator</button>
+            </div>
+
+            <!-- Stepper Display Window -->
+            <div id="journeyDisplay" class="bg-white p-6 rounded-xl border border-sand-200 shadow-sm">
+                <!-- Content dynamically updated via JS -->
+            </div>
+        </section>
+
+        <!-- SECTION 6: Legal, Compliance & Cryptographic Architecture -->
+        <section id="legal" class="space-y-6">
+            <div class="border-b border-sand-200 pb-4">
+                <h2 class="text-2xl sm:text-3xl font-bold text-slate-900">6. Legal, Compliance & Cryptographic Protection</h2>
+                <p class="text-slate-600 mt-1">
+                    Operating under strict Texas privacy statutes (HB 1181, HB 581, CUBI Act) while utilizing C2PA headers and spatial steganography for deepfake protection.
+                </p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <!-- Legal Card 1 -->
+                <div class="bg-white p-5 rounded-xl border border-sand-200 shadow-sm space-y-3">
+                    <div class="text-amber-600 font-bold text-sm uppercase tracking-wider flex items-center space-x-1">
+                        <span>⚖️ Texas CUBI & HB 1181</span>
+                    </div>
+                    <h3 class="text-base font-bold text-slate-900">Zero-Retention Age Tokenization</h3>
+                    <p class="text-xs text-slate-600 leading-relaxed">
+                        To comply with Texas statutory penalties (up to $10,000/day for unverified access), neither the platform nor the third-party verifier stores ID images or biometric templates. Verifiers return a signed JWT stored in Cloudflare D1.
+                    </p>
+                </div>
+
+                <!-- Legal Card 2 -->
+                <div class="bg-white p-5 rounded-xl border border-sand-200 shadow-sm space-y-3">
+                    <div class="text-indigo-600 font-bold text-sm uppercase tracking-wider flex items-center space-x-1">
+                        <span>🔐 C2PA Cryptographic Signatures</span>
+                    </div>
+                    <h3 class="text-base font-bold text-slate-900">Invisible Provenance Headers</h3>
+                    <p class="text-xs text-slate-600 leading-relaxed">
+                        Every unwatermarked image/video has an invisible C2PA JSON-LD manifest injected into its file header (EXIF/iTXt), signed with the platform's private cryptographic key to prove age-verified generation.
+                    </p>
+                </div>
+
+                <!-- Legal Card 3 -->
+                <div class="bg-white p-5 rounded-xl border border-sand-200 shadow-sm space-y-3">
+                    <div class="text-emerald-600 font-bold text-sm uppercase tracking-wider flex items-center space-x-1">
+                        <span>👁️ Spatial Fourier Steganography</span>
+                    </div>
+                    <h3 class="text-base font-bold text-slate-900">Luminance Plane Fingerprinting</h3>
+                    <p class="text-xs text-slate-600 leading-relaxed">
+                        A high-frequency noise signal encoding the verified User ID is embedded across the image luminance plane. If a user strips header metadata or records a video, the watermark survives re-encoding.
+                    </p>
+                </div>
+            </div>
+
+            <!-- Long Term Horizon Summary -->
+            <div class="bg-gradient-to-r from-slate-900 to-indigo-950 text-white p-6 rounded-xl shadow-lg border border-slate-800">
+                <h3 class="text-lg font-bold text-indigo-300 mb-2">Long-Term Strategic Phases</h3>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 text-xs text-slate-300">
+                    <div>
+                        <span class="font-bold text-white block mb-1">Phase 2: Bare-Metal GPU Migration</span>
+                        Once net cash flows exceed $3K/mo, net profits are reinvested into procuring dedicated local enterprise GPU server racks (4x RTX 4090 / A6000 nodes), expanding gross SaaS margins from 65% to 88%+.
+                    </div>
+                    <div>
+                        <span class="font-bold text-white block mb-1">Phase 3: ClearID & Industry Standardization</span>
+                        Scaling zero-retention identity into a universal ClearID SSO protocol for adult/AI web properties, partnering with cyber-liability insurers, and establishing SAG-AFTRA likeness monetization protocols.
+                    </div>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-white border-t border-sand-200 mt-16 py-8">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row justify-between items-center text-xs text-slate-500">
+            <div>
+                © 2026 AI Creator Operating System. All rights reserved. Texas CUBI & HB 1181 Compliant.
+            </div>
+            <div class="mt-2 sm:mt-0 font-mono">
+                Capitalized at $30,000 Initial Seed Float
+            </div>
+        </div>
+    </footer>
+
+    <!-- JavaScript Application Logic -->
+    <script>
+        // Smooth Navigation Helper
+        function scrollToSection(id) {
+            document.getElementById(id).scrollIntoView({ behavior: 'smooth' });
+        }
+
+        // --- SECTION 1: Capital Allocation Donut Chart ---
+        let capitalChartCtx = document.getElementById('capitalChart').getContext('2d');
+        new Chart(capitalChartCtx, {
+            type: 'doughnut',
+            data: {
+                labels: [
+                    'Legal & Compliance ($3.5K)',
+                    'Merchant Setup ($2.0K)',
+                    'ID Verification Float ($2.5K)',
+                    'Local Refurbishment ($1.5K)',
+                    'Cloud Compute Reserve ($4.5K)',
+                    'Aggressive Growth & Ads ($10K)',
+                    'Operational Buffer ($6K)'
+                ],
+                datasets: [{
+                    data: [3500, 2000, 2500, 1500, 4500, 10000, 6000],
+                    backgroundColor: [
+                        '#4f46e5', '#0284c7', '#059669', '#d97706', '#8b5cf6', '#e11d48', '#64748b'
+                    ],
+                    borderWidth: 2,
+                    borderColor: '#ffffff'
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        position: 'bottom',
+                        labels: {
+                            boxWidth: 12,
+                            font: { size: 11 }
+                        }
+                    }
+                }
+            }
+        });
+
+        // --- SECTION 2: Interactive Financial Trajectory Simulator ---
+        let financialChartCtx = document.getElementById('financialChart').getContext('2d');
+        let financialChart = new Chart(financialChartCtx, {
+            type: 'line',
+            data: {
+                labels: ['Month 1', 'Month 2', 'Month 3', 'Month 4', 'Month 5', 'Month 6'],
+                datasets: [
+                    {
+                        label: 'Gross MRR ($)',
+                        data: [338, 592, 783, 926, 1033, 1113],
+                        borderColor: '#4f46e5',
+                        backgroundColor: 'rgba(79, 70, 229, 0.1)',
+                        fill: true,
+                        tension: 0.3
+                    },
+                    {
+                        label: 'Net Platform Profit ($)',
+                        data: [210, 420, 610, 780, 890, 980],
+                        borderColor: '#059669',
+                        borderDash: [5, 5],
+                        tension: 0.3
+                    }
+                ]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        grid: { color: '#f1f5f9' }
+                    },
+                    x: {
+                        grid: { display: false }
+                    }
+                }
+            }
+        });
+
+        function updateFinancialSimulation() {
+            let scenario = document.getElementById('scenarioSelect').value;
+            let traffic = parseInt(document.getElementById('trafficSlider').value);
+            document.getElementById('trafficValue').innerText = traffic.toLocaleString() + " / mo";
+
+            let mrrData = [];
+            let profitData = [];
+            let netProfitFinal = 0;
+
+            if (scenario === 'conservative') {
+                // 2% KYC, 1.5% Paid, 25% Churn
+                let verified = traffic * 0.02;
+                let newPaid = verified * 0.015;
+                let activePro = 0;
+                let activeAgency = 0;
+
+                for (let m = 1; m <= 6; m++) {
+                    activePro = (activePro * 0.75) + (newPaid * 0.90);
+                    activeAgency = (activeAgency * 0.75) + (newPaid * 0.10);
+                    let mrr = (activePro * 70) + (activeAgency * 311);
+                    let profit = (activePro * 44) + (activeAgency * 201);
+                    mrrData.push(Math.round(mrr));
+                    profitData.push(Math.round(profit));
+                }
+                netProfitFinal = profitData[5];
+            } else {
+                // Standard: 5% KYC, 3% Paid, 20% Churn
+                let verified = traffic * 0.05;
+                let newPaid = verified * 0.03;
+                let activePro = 0;
+                let activeAgency = 0;
+
+                for (let m = 1; m <= 6; m++) {
+                    activePro = (activePro * 0.80) + (newPaid * 0.90);
+                    activeAgency = (activeAgency * 0.80) + (newPaid * 0.10);
+                    let mrr = (activePro * 70) + (activeAgency * 311);
+                    let profit = (activePro * 44) + (activeAgency * 201);
+                    mrrData.push(Math.round(mrr));
+                    profitData.push(Math.round(profit));
+                }
+                netProfitFinal = profitData[5];
+            }
+
+            financialChart.data.datasets[0].data = mrrData;
+            financialChart.data.datasets[1].data = profitData;
+            financialChart.update();
+
+            document.getElementById('simNetProfit').innerText = "$" + netProfitFinal.toLocaleString() + " / mo";
+            
+            let badge = document.getElementById('simStatusBadge');
+            if (netProfitFinal >= 3000) {
+                badge.innerText = "✓ Target $3K Net Met";
+                badge.className = "text-xs font-bold px-2 py-0.5 rounded bg-emerald-100 text-emerald-800 inline-block w-fit";
+            } else {
+                badge.innerText = "⚠️ Below $3K Target";
+                badge.className = "text-xs font-bold px-2 py-0.5 rounded bg-amber-100 text-amber-800 inline-block w-fit";
+            }
+        }
+
+        // --- SECTION 3: System Architecture Interactive Detail Switcher ---
+        const techDetails = {
+            client: {
+                title: "1. Client & Presentation Layer (Cloudflare Pages)",
+                desc: "Responsive Progressive Web App (PWA) hosted on Cloudflare Pages. Delivers ultra-fast static assets, creator bio-link portals, and fan messaging UIs with zero bandwidth charges.",
+                tags: ["Cloudflare Pages", "PWA Manifest", "Tailwind CSS", "Bio-Link Router"]
+            },
+            edge: {
+                title: "2. Edge Proxy & Rate Limiter (Cloudflare Workers, D1 & R2)",
+                desc: "Cloudflare Workers intercept incoming requests, execute rate limits, check zero-retention age tokens in Cloudflare D1 SQL cache, and serve media securely from Cloudflare R2 zero-egress vault storage.",
+                tags: ["Cloudflare Workers", "Cloudflare D1 SQL", "Cloudflare R2 Vault", "Zero-Egress Cache"]
+            },
+            erp: {
+                title: "3. Core Business Logic Engine (Self-Hosted Odoo ERP)",
+                desc: "Self-hosted open-source Odoo ERP chassis managing user account ledgers, CRM lead pipelines, Fan Discuss lockers, LMS masterclass courses, dropship order processing, and 30% affiliate + MLM tracking.",
+                tags: ["Odoo Core Chassis", "Odoo CRM & Discuss", "Odoo LMS Portal", "Odoo Gamification"]
+            },
+            compute: {
+                title: "4. Hybrid Compute Execution Matrix (Local PCs + Cloud GPU Bursts)",
+                desc: "Splits rendering jobs logically: non-paying/freemium tasks queue to 3 local workstations running ComfyUI workers ($0 cloud cost). Paying subscriber jobs instantly burst to elastic cloud GPU clusters (RunPod/Vast.ai).",
+                tags: ["3x Workstation Queue", "ComfyUI Local API", "RunPod GPU Bursts", "Wan 2.2 / Flux.1"]
+            }
+        };
+
+        function showTechDetail(key) {
+            const data = techDetails[key];
+            document.getElementById('techDetailTitle').innerText = data.title;
+            document.getElementById('techDetailDesc').innerText = data.desc;
+            
+            let tagsHtml = data.tags.map(t => `<span class="text-xs bg-indigo-900/60 text-indigo-200 px-2.5 py-1 rounded font-mono border border-indigo-700">${t}</span>`).join(' ');
+            document.getElementById('techDetailTags').innerHTML = tagsHtml;
+        }
+
+        // --- SECTION 4: Unit Economics Bar Chart ---
+        let unitChartCtx = document.getElementById('unitEconomicsChart').getContext('2d');
+        new Chart(unitChartCtx, {
+            type: 'bar',
+            data: {
+                labels: ['Tier 1 (SFW Free)', 'Tier 2 (NSFW Free)', 'Tier 3 (Pro $49)', 'Tier 4 (Agency $249)'],
+                datasets: [
+                    {
+                        label: 'Net ARPU / Price ($)',
+                        data: [0, 0, 49, 249],
+                        backgroundColor: '#4f46e5'
+                    },
+                    {
+                        label: 'Direct Monthly Cost ($)',
+                        data: [0.03, 1.71, 18.01, 88.02],
+                        backgroundColor: '#e11d48'
+                    },
+                    {
+                        label: 'Net Platform Margin ($)',
+                        data: [-0.03, -1.71, 30.99, 160.98],
+                        backgroundColor: '#059669'
+                    }
+                ]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    y: { beginAtZero: true }
+                }
+            }
+        });
+
+        // --- SECTION 5: Customer Journeys Interactive Component ---
+        const journeys = {
+            sfw: `
+                <div class="space-y-4">
+                    <h3 class="text-base font-bold text-slate-900">Flow A: Unverified SFW Visitor Journey</h3>
+                    <div class="grid grid-cols-1 md:grid-cols-4 gap-4 text-xs">
+                        <div class="p-3 bg-sand-50 rounded-lg border border-sand-200">
+                            <span class="font-bold text-indigo-600 block mb-1">1. Entry Point</span>
+                            Lands via press release, social avatar post, or blog link. Registers with email only.
+                        </div>
+                        <div class="p-3 bg-sand-50 rounded-lg border border-sand-200">
+                            <span class="font-bold text-indigo-600 block mb-1">2. SFW Access</span>
+                            Accesses SFW image generation, story scripts, public blog, and marketplace.
+                        </div>
+                        <div class="p-3 bg-sand-50 rounded-lg border border-sand-200">
+                            <span class="font-bold text-indigo-600 block mb-1">3. Conversion Trigger</span>
+                            Attempts NSFW video or custom messaging, triggering 18+ Verification prompt.
+                        </div>
+                        <div class="p-3 bg-sand-50 rounded-lg border border-sand-200">
+                            <span class="font-bold text-indigo-600 block mb-1">4. Monetization Yield</span>
+                            Generates ad impressions & affiliate clicks on external blog links.
+                        </div>
+                    </div>
+                </div>
+            `,
+            nsfw: `
+                <div class="space-y-4">
+                    <h3 class="text-base font-bold text-slate-900">Flow B: Verified NSFW Freemium User Journey</h3>
+                    <div class="grid grid-cols-1 md:grid-cols-4 gap-4 text-xs">
+                        <div class="p-3 bg-sand-50 rounded-lg border border-sand-200">
+                            <span class="font-bold text-indigo-600 block mb-1">1. Verification Gate</span>
+                            Redirected to Yoti/Ondato zero-retention ID + liveness biometric check.
+                        </div>
+                        <div class="p-3 bg-sand-50 rounded-lg border border-sand-200">
+                            <span class="font-bold text-indigo-600 block mb-1">2. Instant Reward</span>
+                            Unlocks Soft Exposure Scan + 3-Hour Trial (Wan 2.2 video & face swap).
+                        </div>
+                        <div class="p-3 bg-sand-50 rounded-lg border border-sand-200">
+                            <span class="font-bold text-indigo-600 block mb-1">3. Local Slow Queue</span>
+                            Generations process via 3 local PCs (5–15 min wait time for free users).
+                        </div>
+                        <div class="p-3 bg-sand-50 rounded-lg border border-sand-200">
+                            <span class="font-bold text-indigo-600 block mb-1">4. Upsell Prompt</span>
+                            Prompted to upgrade to Tier 3 ($49/mo) for instant Cloud GPU processing.
+                        </div>
+                    </div>
+                </div>
+            `,
+            pro: `
+                <div class="space-y-4">
+                    <h3 class="text-base font-bold text-slate-900">Flow C: Pro Creator & Monetizer Journey</h3>
+                    <div class="grid grid-cols-1 md:grid-cols-4 gap-4 text-xs">
+                        <div class="p-3 bg-sand-50 rounded-lg border border-sand-200">
+                            <span class="font-bold text-indigo-600 block mb-1">1. Upgrade & Provisioning</span>
+                            Subscribes to Tier 3 ($49/mo). Provisions 5 unwatermarked AI Character slots + C2PA.
+                        </div>
+                        <div class="p-3 bg-sand-50 rounded-lg border border-sand-200">
+                            <span class="font-bold text-indigo-600 block mb-1">2. LoRA Likeness Training</span>
+                            Uploads reference photos to train custom LoRA likeness; configures bio-link.
+                        </div>
+                        <div class="p-3 bg-sand-50 rounded-lg border border-sand-200">
+                            <span class="font-bold text-indigo-600 block mb-1">3. Fan Monetization</span>
+                            Sells subscriptions & media unlocks in Odoo Discuss Vault at 0% platform royalty.
+                        </div>
+                        <div class="p-3 bg-sand-50 rounded-lg border border-sand-200">
+                            <span class="font-bold text-indigo-600 block mb-1">4. Dropship UGC</span>
+                            Generates AI UGC product reviews for marketplace items (earning 10–30% margins).
+                        </div>
+                    </div>
+                </div>
+            `,
+            aggregator: `
+                <div class="space-y-4">
+                    <h3 class="text-base font-bold text-slate-900">Free Credit Aggregator Engine (Offloading Compute)</h3>
+                    <p class="text-xs text-slate-600">When a freemium user exhausts their local PC generation quota, a Cloudflare Worker proxy routes subsequent prompts to indexed third-party free AI generators (from <code>nsfw.tools</code>).</p>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-xs">
+                        <div class="p-3 bg-sand-50 rounded-lg border border-sand-200">
+                            <span class="font-bold text-slate-900 block mb-1">1. Quota Interception</span>
+                            Worker intercepts generation request upon local PC queue exhaustion.
+                        </div>
+                        <div class="p-3 bg-sand-50 rounded-lg border border-sand-200">
+                            <span class="font-bold text-slate-900 block mb-1">2. Headless Proxy Dispatch</span>
+                            Dispatches payload via Playwright/Puppeteer worker to active third-party API target.
+                        </div>
+                        <div class="p-3 bg-sand-50 rounded-lg border border-sand-200">
+                            <span class="font-bold text-slate-900 block mb-1">3. In-Platform Delivery</span>
+                            Scrubs external branding and renders media inside Odoo UI, keeping user on-platform.
+                        </div>
+                    </div>
+                </div>
+            `
+        };
+
+        function switchJourney(key) {
+            document.querySelectorAll('#journeys button').forEach(b => {
+                b.className = "px-4 py-2 text-xs sm:text-sm font-bold rounded-lg bg-white text-slate-600 hover:bg-sand-100 border border-sand-200";
+            });
+            document.getElementById('tab-' + key).className = "px-4 py-2 text-xs sm:text-sm font-bold rounded-lg bg-indigo-600 text-white shadow-sm";
+            document.getElementById('journeyDisplay').innerHTML = journeys[key];
+        }
+
+        // Initialize default journey on load
+        switchJourney('sfw');
+    </script>
+</body>
+</html>

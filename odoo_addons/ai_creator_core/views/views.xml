@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+        <!-- ============ AI Creator Subscriber ============ -->
+        <record id="view_ai_creator_subscriber_list" model="ir.ui.view">
+            <field name="name">ai.creator.subscriber.list</field>
+            <field name="model">ai.creator.subscriber</field>
+            <field name="arch" type="xml">
+                <list string="Creator Subscribers">
+                    <field name="name"/>
+                    <field name="partner_id"/>
+                    <field name="tier"/>
+                    <field name="age_verified"/>
+                    <field name="compute_credits"/>
+                </list>
+            </field>
+        </record>
+
+        <record id="view_ai_creator_subscriber_form" model="ir.ui.view">
+            <field name="name">ai.creator.subscriber.form</field>
+            <field name="model">ai.creator.subscriber</field>
+            <field name="arch" type="xml">
+                <form string="Creator Subscriber">
+                    <sheet>
+                        <group>
+                            <field name="name"/>
+                            <field name="partner_id"/>
+                            <field name="tier"/>
+                            <field name="age_verified"/>
+                            <field name="verification_token"/>
+                            <field name="compute_credits"/>
+                            <field name="crypto_wallet_override"/>
+                        </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+        <record id="action_ai_creator_subscriber" model="ir.actions.act_window">
+            <field name="name">Creator Subscribers</field>
+            <field name="res_model">ai.creator.subscriber</field>
+            <field name="view_mode">list,form</field>
+        </record>
+
+        <!-- ============ OSINT Audit Log ============ -->
+        <record id="view_ai_osint_audit_list" model="ir.ui.view">
+            <field name="name">ai.osint.audit.list</field>
+            <field name="model">ai.osint.audit</field>
+            <field name="arch" type="xml">
+                <list string="OSINT Audit Logs">
+                    <field name="subscriber_id"/>
+                    <field name="target_query"/>
+                    <field name="breach_count"/>
+                    <field name="c2pa_manifest_hash"/>
+                </list>
+            </field>
+        </record>
+
+        <record id="view_ai_osint_audit_form" model="ir.ui.view">
+            <field name="name">ai.osint.audit.form</field>
+            <field name="model">ai.osint.audit</field>
+            <field name="arch" type="xml">
+                <form string="OSINT Audit Log">
+                    <sheet>
+                        <group>
+                            <field name="subscriber_id"/>
+                            <field name="target_query"/>
+                            <field name="breach_count"/>
+                            <field name="c2pa_manifest_hash"/>
+                            <field name="raw_scan_json"/>
+                        </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+        <record id="action_ai_osint_audit" model="ir.actions.act_window">
+            <field name="name">OSINT Audit Logs</field>
+            <field name="res_model">ai.osint.audit</field>
+            <field name="view_mode">list,form</field>
+        </record>
+
+        <!-- ============ Menus ============ -->
+        <menuitem id="menu_ai_creator_root" name="AI Creator Platform" sequence="10"/>
+        <menuitem id="menu_ai_creator_subscriber" name="Creator Subscribers"
+                  parent="menu_ai_creator_root" action="action_ai_creator_subscriber" sequence="10"/>
+        <menuitem id="menu_ai_osint_audit" name="OSINT Audit Logs"
+                  parent="menu_ai_creator_root" action="action_ai_osint_audit" sequence="20"/>
+
+    </data>
+</odoo>

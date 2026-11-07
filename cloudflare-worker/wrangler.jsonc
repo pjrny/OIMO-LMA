@@ -1,0 +1,47 @@
+{
+  "name": "ok-mas-lma-oimo-x",
+  "main": "worker/index.ts",
+  "compatibility_date": "2025-03-01",
+  "r2_buckets": [
+    {
+      "binding": "MEDIA_LOCKER",
+      "bucket_name": "lma-mas-media"
+    }
+  ],
+  // Bundle .html files as Text modules so worker/index.ts can import deck.html.
+  "rules": [
+    {
+      "type": "Text",
+      "globs": ["**/*.html"]
+    }
+  ],
+  "vars": {
+    "AI_PROVIDER": "gemini",
+    "XXXOOO_ODOO_URL": "https://xxxooo.odoo.com",
+    "XXXOOO_ODOO_DB": "xxxooo",
+    "XXXOOO_UID": "2",
+    "XXXOOO_MCP_URL": "https://xxxooo.odoo.com/mcp",
+    "XOXO_ODOO_URL": "https://xoxo.odoo.com",
+    "XOXO_ODOO_DB": "xoxo",
+    "XOXO_UID": "2"
+  }
+  // ---------------------------------------------------------------------------
+  // REQUIRED SECRETS — set via `npx wrangler secret put <NAME>` (never commit values):
+  //   XXXOOO_API_KEY          Odoo API key for the ERP instance (xxxooo.odoo.com)
+  //   XXXOOO_MCP_KEY          Odoo MCP key for the xxxooo native MCP server
+  //   XOXO_API_KEY            Odoo API key for the Locker instance (xoxo.odoo.com)
+  //   GEMINI_API_KEY          Google Gemini API key (default cloud LLM provider)
+  // Optional secrets:
+  //   MOONSHOT_API_KEY        Kimi (Moonshot) API key — provider "kimi"
+  //   XAI_API_KEY             xAI API key — provider "grok"
+  //   HIBP_API_KEY            HaveIBeenPwned API key (also accepts HaveIBeenPwned_API)
+  //   RUNPOD_API              RunPod cloud GPU API key
+  //   VAST_API                Vast.ai GPU network API key
+  //   Yoti_API                Yoti zero-retention age verification key
+  //   Ondato_Age_Verification_API  Ondato age verification key (secondary)
+  //   HaveIBeenPwned_API      HIBP breach database API (blueprint naming)
+  //   HudsonRock_API          HudsonRock infostealer compromise data API
+  //   Epieos_API              Epieos email/phone OSINT lookup API
+  //   WhatsMyName_API         WhatsMyName username enumeration API
+  // ---------------------------------------------------------------------------
+}
