@@ -404,7 +404,7 @@ export default {
           const id = parseInt(userId, 10);
           const { baseUrl, db, uid, apiKey } = getOdooInstance("erp", env);
           let subscriber: any;
-          let via: "xmlrpc" | "mcp" = "xmlrpc";
+          let via: "xmlrpc" | "mcp" | "partner" = "xmlrpc";
           try {
             const records = await odooExecuteKw(
               baseUrl,
@@ -418,6 +418,36 @@ export default {
             );
             subscriber = records && records[0];
           } catch (rpcErr: any) {
+            const modelMissing = /doesn't exist/.test(String(rpcErr?.message ?? ""));
+            if (modelMissing) {
+              // SaaS trial can't host custom modules: the blueprint's
+              // ai.creator.subscriber model isn't installed. Fall back to the
+              // built-in res.partner record so status lookups still work.
+              const partners = await odooExecuteKw(
+                baseUrl,
+                db,
+                uid,
+                apiKey,
+                "res.partner",
+                "search_read",
+                [[["id", "=", id]]],
+                { fields: ["name", "email"], limit: 1 }
+              );
+              const p = partners && partners[0];
+              if (p) {
+                return jsonResponse({
+                  ok: true,
+                  via: "partner",
+                  id: p.id,
+                  name: p.name,
+                  tier: null,
+                  age_verified: null,
+                  credits: null,
+                  note: "ai.creator.subscriber not installed on SaaS; returning res.partner",
+                });
+              }
+              return jsonResponse({ ok: false, error: "User not found" }, 404);
+            }
             // XML-RPC API key revoked/expired? Fall back to the native MCP server
             // (read-only) so status lookups keep working until the key is rotated.
             if (!isOdooAuthError(rpcErr) || !env.XXXOOO_MCP_KEY || !env.XXXOOO_MCP_URL) {
