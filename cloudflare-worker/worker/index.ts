@@ -13,6 +13,10 @@ import { odooExecuteKw, getOdooInstance, odooMcpTool, isOdooAuthError } from "./
 import { runCloudLLM, xaiKey } from "./llm";
 import { editWithRefs, validateImagineInput } from "./mas";
 import { assetIdProxy, assetIdBase } from "./assetid";
+import {
+  LADDER, ladderPublic, enrollIdentity, identityStatus, submitEvidence,
+  reviewEvidence, registerProtectedOutput, listProtectedOutputs,
+} from "./identity";
 import { runOsintScan } from "./osint";
 import { verifyAgeToken } from "./age";
 import { dispatchGpuTask } from "./gpu";
@@ -21,6 +25,7 @@ import deckHtml from "./deck.html";
 
 export interface Env {
   MEDIA_LOCKER: R2Bucket;
+  IDENTITY_DB: D1Database;
   PASSCODE?: string;
   AI_PROVIDER?: string;
   // Cloud LLM secrets
@@ -448,6 +453,103 @@ export default {
           return jsonResponse(results);
         } catch (err: any) {
           return jsonResponse({ ok: false, error: err.message }, 500);
+        }
+      }
+
+      // 8b. Identity verification ladder (Levels 0-8): enroll, submit evidence, status.
+      if (path === "/api/identity/ladder" && method === "GET") {
+        return jsonResponse({ ok: true, ladder: ladderPublic() });
+      }
+
+      if (path === "/api/identity/enroll" && method === "POST") {
+        try {
+          const { name, email } = (await request.json()) as any;
+          if (!name || !email || !/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)) {
+            return jsonResponse({ ok: false, error: "Valid name and email required" }, 400);
+          }
+          const result = await enrollIdentity(String(name), String(email).toLowerCase(), env);
+          return jsonResponse({ ok: true, ...result });
+        } catch (err: any) {
+          return jsonResponse({ ok: false, error: err.message }, 500);
+        }
+      }
+
+      if (path === "/api/identity/status" && method === "GET") {
+        const email = (url.searchParams.get("email") || "").toLowerCase();
+        if (!email) return jsonResponse({ ok: false, error: "Missing query param: email" }, 400);
+        const st = await identityStatus(email, env);
+        if (!st) return jsonResponse({ ok: false, error: "Identity not enrolled" }, 404);
+        return jsonResponse({ ok: true, ...st });
+      }
+
+      if (path === "/api/identity/submit" && method === "POST") {
+        try {
+          const form = await request.formData();
+          const email = String(form.get("email") || "").toLowerCase();
+          const level = parseInt(String(form.get("level") ?? ""), 10);
+          const file = form.get("file");
+          let payload: Record<string, unknown> | null = null;
+          const rawPayload = form.get("payload");
+          if (typeof rawPayload === "string" && rawPayload) {
+            payload = JSON.parse(rawPayload);
+          }
+          if (!email || Number.isNaN(level)) {
+            return jsonResponse({ ok: false, error: "Multipart fields required: email, level; optional: file, payload (JSON string)" }, 400);
+          }
+          const result = await submitEvidence(
+            email, level,
+            file instanceof File && file.size > 0 ? file : null,
+            payload, env
+          );
+          return jsonResponse({ ok: true, ...result });
+        } catch (err: any) {
+          return jsonResponse({ ok: false, error: err.message }, 400);
+        }
+      }
+
+      if (path === "/api/identity/admin/review" && method === "POST") {
+        try {
+          const body = (await request.json()) as any;
+          const result = await reviewEvidence(
+            String(body.email || "").toLowerCase(),
+            parseInt(String(body.level), 10),
+            body.decision === "approved" ? "approved" : "rejected",
+            body.note, request.headers.get("X-App-Password") ?? undefined,
+            body.reviewer, env
+          );
+          return jsonResponse({ ok: true, ...result });
+        } catch (err: any) {
+          const unauthorized = /Unauthorized/.test(err.message);
+          return jsonResponse({ ok: false, error: err.message }, unauthorized ? 401 : 400);
+        }
+      }
+
+      // 8c. Protection orchestration: register a generated output with AssetID,
+      // linked to the approving identity (provenance chain).
+      if (path === "/api/protect/output" && method === "POST") {
+        try {
+          const form = await request.formData();
+          const email = String(form.get("email") || "").toLowerCase();
+          const title = String(form.get("title") || "OIMO protected output");
+          const file = form.get("file");
+          if (!email || !(file instanceof File) || file.size === 0) {
+            return jsonResponse({ ok: false, error: "Multipart fields required: email, title, file" }, 400);
+          }
+          const result = await registerProtectedOutput(email, title, file, env);
+          return jsonResponse({ ok: true, ...result });
+        } catch (err: any) {
+          return jsonResponse({ ok: false, error: err.message }, 400);
+        }
+      }
+
+      if (path === "/api/protect/outputs" && method === "GET") {
+        try {
+          const email = (url.searchParams.get("email") || "").toLowerCase();
+          if (!email) return jsonResponse({ ok: false, error: "Missing query param: email" }, 400);
+          const result = await listProtectedOutputs(email, env);
+          return jsonResponse({ ok: true, ...result });
+        } catch (err: any) {
+          return jsonResponse({ ok: false, error: err.message }, 400);
         }
       }
 

@@ -6,6 +6,10 @@
   "r2_buckets": [
     { "binding": "MEDIA_LOCKER", "bucket_name": "lma-mas-media" }
   ],
+  // Identity verification ladder (Levels 0-8) registry.
+  "d1_databases": [
+    { "binding": "IDENTITY_DB", "database_name": "oimo-identity", "database_id": "04758dc1-3a57-4b19-b311-dfe6dc37eaad", "migrations_dir": "migrations/identity" }
+  ],
   // Bundle .html files as Text modules so worker/index.ts can import deck.html.
   "rules": [
     {
