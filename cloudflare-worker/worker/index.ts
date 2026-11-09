@@ -17,6 +17,9 @@ import {
   LADDER, ladderPublic, enrollIdentity, identityStatus, submitEvidence,
   reviewEvidence, registerProtectedOutput, listProtectedOutputs,
 } from "./identity";
+import {
+  providerMatrix, elevenTts, elevenVoices, civitaiSearch, runpodGpus, vertexGenerate,
+} from "./providers";
 import { runOsintScan } from "./osint";
 import { verifyAgeToken } from "./age";
 import { dispatchGpuTask } from "./gpu";
@@ -68,6 +71,12 @@ export interface Env {
   // Age verification secrets
   Yoti_API?: string;
   Ondato_Age_Verification_API?: string;
+  // Expanded providers (Priority 7)
+  ELEVENLABS_API_XOXO?: string;
+  CIVITAI_API_XOXO?: string;
+  RUNPOD_API_ATX_XOXO_2?: string;
+  RUNPOD_API_META_XOXO?: string;
+  GOOGLE_PROJECT_NAME_VORTEX_GEMINI?: string;
 }
 
 const corsHeaders = {
@@ -344,6 +353,65 @@ export default {
         } catch (err: any) {
           return jsonResponse({ ok: false, registry: assetIdBase(env), error: err.message }, 502);
         }
+      }
+
+      // 5d-bis. Expanded providers (ElevenLabs / CivitAI / RunPod / Vertex / Vast).
+      if (path === "/api/providers" && method === "GET") {
+        return jsonResponse({ ok: true, providers: providerMatrix(env) });
+      }
+
+      if (path === "/api/providers/elevenlabs/tts" && method === "POST") {
+        try {
+          const { text, voice_id } = (await request.json()) as any;
+          const result = await elevenTts(String(text || ""), voice_id ? String(voice_id) : undefined, env);
+          return jsonResponse({ ok: true, ...result });
+        } catch (err: any) {
+          return jsonResponse({ ok: false, error: err.message }, 400);
+        }
+      }
+
+      if (path === "/api/providers/elevenlabs/voices" && method === "GET") {
+        try {
+          const voices = await elevenVoices(env);
+          return jsonResponse({ ok: true, voices });
+        } catch (err: any) {
+          return jsonResponse({ ok: false, error: err.message }, 400);
+        }
+      }
+
+      if (path === "/api/providers/civitai/search" && method === "GET") {
+        try {
+          const q = url.searchParams.get("q") || "";
+          if (!q) return jsonResponse({ ok: false, error: "Missing query param: q" }, 400);
+          const results = await civitaiSearch(q, env);
+          return jsonResponse({ ok: true, results });
+        } catch (err: any) {
+          return jsonResponse({ ok: false, error: err.message }, 400);
+        }
+      }
+
+      if (path === "/api/providers/runpod/gpus" && method === "GET") {
+        try {
+          const gpus = await runpodGpus(env);
+          return jsonResponse({ ok: true, gpus });
+        } catch (err: any) {
+          return jsonResponse({ ok: false, error: err.message }, 400);
+        }
+      }
+
+      if (path === "/api/providers/vertex/generate" && method === "POST") {
+        try {
+          const { prompt } = (await request.json()) as any;
+          const result = await vertexGenerate(String(prompt || ""), env);
+          return jsonResponse({ ok: true, ...result });
+        } catch (err: any) {
+          return jsonResponse({ ok: false, error: err.message }, 400);
+        }
+      }
+
+      if (path === "/api/providers/vast" && method === "GET") {
+        // Documented blocked: no VAST_API secret configured yet.
+        return jsonResponse({ ok: false, blocked: "VAST_API secret not configured", required: "Vast.ai API key" }, 503);
       }
 
       if (path.startsWith("/api/assetid/")) {

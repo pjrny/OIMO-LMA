@@ -1,0 +1,40 @@
+# Deploy the canonical OIMO-LMA worker to Cloudflare on every push to main.
+#
+# Required GitHub repo secrets (Settings > Secrets and variables > Actions):
+#   CLOUDFLARE_API_TOKEN  — API token with "Cloudflare Workers" edit rights on
+#                           account 6c5f8a2e10e1f65fa308bafb1583cf89
+#   (optional) CLOUDFLARE_ACCOUNT_ID — falls back to the value below
+#
+# Note: `wrangler deploy` uploads the build but does NOT touch secrets — those
+# are managed separately via dashboard / `wrangler secret put`.
+
+name: deploy-worker
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "cloudflare-worker/**"
+      - ".github/workflows/deploy.yml"
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Install worker deps
+        working-directory: cloudflare-worker
+        run: npm ci || npm install
+      - name: Type-check
+        working-directory: cloudflare-worker
+        run: npx tsc --noEmit
+      - name: Deploy to Cloudflare
+        uses: cloudflare/wrangler-action@v3
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID || '6c5f8a2e10e1f65fa308bafb1583cf89' }}
+          workingDirectory: cloudflare-worker
+          command: deploy
